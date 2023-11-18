@@ -1,28 +1,27 @@
 <template>
   <div>
-    <div class="post" v-for="post in posts">
-      <div>Название: {{ post.title }}</div>
-      <div>Название: {{ post.body }}</div>
-    </div>
+    <h3>Список пользователей</h3>
+    <PostItem 
+      v-for="post in posts"
+      :post="post" 
+     />
   </div>
 </template>
 
 <script>
+import PostItem from './PostItem.vue';
+
 export default {
+  components: { PostItem },
   props: {
-    posts: { 
+    posts: {
       type: Array,
       required: true,
-    }, 
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.post {
-  text-align: left;
-  padding: 15px;
-  border: 2px solid teal;
-  margin-top: 10px;
-}
+
 </style>
