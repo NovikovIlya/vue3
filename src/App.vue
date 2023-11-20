@@ -1,13 +1,21 @@
 <template>
   <div class="app">
     <h1>Страница с постами</h1>
-    <!-- <input type="text" v-model.trim="modificatorValue"/> -->
-    <my-button @click="showCreate" class="btnCreate">Создать</my-button>
-    <!-- <my-button @click="fetchPost">Получить</my-button> -->
+
+    <div class="app__btns">
+      <my-button @click="showCreate" class="btnCreate">Создать</my-button>
+      <my-select v-model="selectedSort" :options="sortOptions"/>
+    </div>
+
+    <!-- :show='dialogVisible'   @update:show='dialogVisible=$event'(false) -->
     <MyDialog v-model:show="dialogVisible">
       <PostForm @create="createPost" />
     </MyDialog>
-    <PostList :posts="posts" @remove="removePost" />
+    <PostList 
+      :posts="sortedPosts" 
+      @remove="removePost"
+      v-if="!isPostLoading" />
+    <div v-else>Идет загрузка...</div>
   </div>
 </template>
 
@@ -27,7 +35,13 @@ export default {
     return {
       posts: [],
       dialogVisible: false,
-      modificatorValue:'',
+      modificatorValue: '',
+      isPostLoading: false,
+      selectedSort: '',
+      sortOptions: [
+        { value: 'title', name: 'По названию' },
+        { value: 'body', name: 'По описанию' },
+      ],
     };
   },
   methods: {
@@ -41,20 +55,36 @@ export default {
     showCreate() {
       this.dialogVisible = true;
     },
-    async fetchPost(){
+    async fetchPost() {
       try {
+        this.isPostLoading = true;
         const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
-        this.posts = response.data
-        console.log(response)
+        this.posts = response.data;
+        console.log(response);
       } catch (error) {
-        alert(error)
+        alert(error);
+      } finally {
+        this.isPostLoading = false;
       }
+    },
+  },
+  mounted() {
+    this.fetchPost();
+  },
+  computed:{
+    sortedPosts(){
+      return [...this.posts].sort((post1,post2)=>{
+        return(
+          post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+        )
+      })
     }
   },
+  
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 * {
   margin: 0;
   padding: 0;
@@ -62,5 +92,12 @@ export default {
 }
 .btnCreate {
   margin-top: 15px;
+  padding: 10px;
+}
+.app {
+  &__btns {
+    display: flex;
+    justify-content: space-between;
+  }
 }
 </style>
