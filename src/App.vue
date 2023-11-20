@@ -1,32 +1,55 @@
 <template>
   <div class="app">
-    <PostForm @create="createPost"/>
-    <PostList :posts="posts" />
+    <h1>Страница с постами</h1>
+    <!-- <input type="text" v-model.trim="modificatorValue"/> -->
+    <my-button @click="showCreate" class="btnCreate">Создать</my-button>
+    <!-- <my-button @click="fetchPost">Получить</my-button> -->
+    <MyDialog v-model:show="dialogVisible">
+      <PostForm @create="createPost" />
+    </MyDialog>
+    <PostList :posts="posts" @remove="removePost" />
   </div>
-
 </template>
 
 <script>
 import PostForm from './components/PostForm.vue';
-import PostList from './components/PostList.vue'; 
+import PostList from './components/PostList.vue';
+import MyDialog from './components/UI/MyDialog.vue';
+import axios from 'axios';
+
 export default {
-  components:{
-    PostForm,PostList
+  components: {
+    PostForm,
+    PostList,
+    MyDialog,
   },
   data() {
     return {
-      posts: [
-        { id: 1, title: 'JavaSCript', body: 'Описание поста' },
-        { id: 2, title: 'JavaSCript 2', body: 'Описание поста 2' },
-      ],
-      title: '',
-      body: '',
+      posts: [],
+      dialogVisible: false,
+      modificatorValue:'',
     };
   },
   methods: {
     createPost(post) {
-      this.posts.push(post)
+      this.posts.push(post);
+      this.dialogVisible = false;
     },
+    removePost(post) {
+      this.posts = this.posts.filter((item) => item.id !== post.id);
+    },
+    showCreate() {
+      this.dialogVisible = true;
+    },
+    async fetchPost(){
+      try {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+        this.posts = response.data
+        console.log(response)
+      } catch (error) {
+        alert(error)
+      }
+    }
   },
 };
 </script>
@@ -37,6 +60,7 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-
-
+.btnCreate {
+  margin-top: 15px;
+}
 </style>

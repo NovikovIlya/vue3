@@ -2,7 +2,7 @@
   <div>
     <div>
       <form @submit.prevent>
-        <h4>Создание поста</h4>
+        <h4 class="text">Создание поста</h4>
         <my-input v-model="post.title"  type="text" placeholder="Название поста" />
         <my-input v-model="post.body" type="text" placeholder="Описание поста" />
         <my-button @click="createPost" class="btn">Создать</my-button>
@@ -15,7 +15,6 @@
 
 
 export default {
-
   data() {
     return {
       post: {
@@ -38,6 +37,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.text{
+  color: black;
+}
 form {
   display: flex;
   flex-direction: column;
