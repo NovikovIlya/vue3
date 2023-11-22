@@ -1,49 +1,48 @@
 <template>
-  <div v-show='posts.length > 0'>
+  <div v-if="posts?.length > 0">
     <h3>Список пользователей</h3>
-    <TransitionGroup name="post-list">
-        <PostItem 
+    <transition-group name="user-list">
+      <post-item
         v-for="post in posts"
+        :post="post"
         :key="post.id"
-        
-        :post="post" 
         @remove="$emit('remove', post)"
       />
-    </TransitionGroup>
-  
-
+    </transition-group>
   </div>
-  <h2 v-show="posts.length === 0">
-    Список постов пуст 
+  <h2 v-else style="color: red">
+    Список пользователей пуст
   </h2>
 </template>
 
 <script>
-import PostItem from './PostItem.vue';
-
+import PostItem from "../components/PostItem.vue";
 export default {
-  emits: ['remove'],
-  components: { PostItem },
+  components: {PostItem},
   props: {
     posts: {
       type: Array,
-      required: true,
-    },
-  },
-};
+      required: true
+    }
+  }
+}
 </script>
 
-<style lang="scss" scoped>
-.post-list-enter-active,
-.post-list-leave-active {
-  transition: all 0.3s ease;
+<style scoped>
+.user-list-item {
+  display: inline-block;
+  margin-right: 10px;
 }
-.post-list-enter-from,
-.post-list-leave-to {
+.user-list-enter-active,
+.user-list-leave-active {
+  transition: all 0.4s ease;
+}
+.user-list-enter-from,
+.user-list-leave-to {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateX(130px);
 }
-.post-list-move {
-  transition: transform 0.8s ease;
+.user-list-move {
+  transition: transform 0.4s ease;
 }
 </style>
